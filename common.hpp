@@ -6,6 +6,13 @@ typedef struct board{
     char* board;
 } board;
 
+typedef struct move{
+    char file1;
+    char rank1;
+    char file2;
+    char rank2;
+} move;
+
 #define bIndex(file, rank) (rank<<3)+file
 #define black(piece) piece>15 ? piece : piece<<1
 #define white(piece) piece>15 ? piece>>1 : piece

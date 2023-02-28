@@ -7,6 +7,7 @@
 #include "common.hpp"
 
 int main(int argc, char** argv){
+    std::cout << sizeof(struct move) << "\n";
     Board();
     return 0;
 }
