@@ -27,3 +27,20 @@ std::string Piece::toString(char piece){
             return " ";
     }
 }
+
+void Piece::addMove(struct move* moves, int* nMoves, int* currentLimit, struct move* newMove){
+    if(currentLimit == nMoves + 1){
+        moves = (struct move*)realloc(moves, *(currentLimit)+50);
+        (*currentLimit) += 50;
+    }
+    moves[*(nMoves)] = (*newMove);
+    free(newMove);
+}
+
+struct move* Piece::getMoves(struct board*){
+    struct move* moves = (struct move*)malloc(50*sizeof(struct move));
+    int currentLimit = 50;
+    int nMoves = 0;
+
+
+}

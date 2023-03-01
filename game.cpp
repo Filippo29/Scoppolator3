@@ -3,21 +3,21 @@
 #include <iostream>
 
 #include "piece.hpp"
-#include "board.hpp"
+#include "game.hpp"
 #include "common.hpp"
 
 int main(int argc, char** argv){
-    std::cout << sizeof(struct move) << "\n";
-    Board();
+    std::cout << sizeof(struct board) << "\n";
+    Game();
     return 0;
 }
 
-Board::Board(){
-    this->b = Board::init1();
-    Board::print(b);
+Game::Game(){
+    this->b = Game::init1();
+    Game::print(b);
 }
 
-struct board* Board::init1(){
+struct board* Game::init1(){
     struct board* b = (struct board*)malloc(sizeof(struct board));
     b->board = (char*)calloc(64, sizeof(char));
 
@@ -47,11 +47,15 @@ struct board* Board::init1(){
     return b;
 }
 
-void Board::print(struct board* b){
+void Game::print(struct board* b){
     for(int rank = 7; rank >= 0; rank--){
         for(int file = 0; file < 8; file++){
             std::cout << Piece::toString(b->board[bIndex(file, rank)]) << " ";
         }
         std::cout << "\n";
     }
+}
+
+struct board* doMove(){
+    
 }

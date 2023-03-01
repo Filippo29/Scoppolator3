@@ -1,8 +1,9 @@
-class Board{
+class Game{
     private:
         struct board* b;
     public:
-        Board();
+        Game();
         static struct board* init1();
         static void print(struct board* b);
+        struct board* doMove();
 };
