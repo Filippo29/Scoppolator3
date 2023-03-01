@@ -7,17 +7,15 @@ typedef struct board{
 } board;
 
 typedef struct move{
-    unsigned char oldFile;
-    unsigned char oldRank;
     unsigned char newFile;
     unsigned char newRank;
-    unsigned char isCapture;  //0 = if not capture, 1 if capture
 } move;
 
 typedef struct moves_t{
     struct move* moves;
     int nMoves;
     unsigned char piece;
+    unsigned char index;
 } moves_t;
 
 #define bIndex(file, rank) (rank<<3)+file

@@ -49,6 +49,7 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
 
     unsigned char file = fileFromIndex(index);
     unsigned char rank = rankFromIndex(index);
+    moves->index = index;
     bool isWhite = b->board[index] == white(b->board[index]);
 
     switch (white(b->board[index]))
@@ -59,17 +60,11 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
                 struct move* newMove = (struct move*)malloc(sizeof(struct move));
                 newMove->newFile = file;
                 newMove->newRank = rank+direction;
-                newMove->oldFile = file;
-                newMove->oldRank = rank;
-                newMove->isCapture = 0;
                 addMove(moves, &currentLimit, newMove);
                 if(((isWhite && rank==1) || (!isWhite && rank==6)) && !b->board[bIndex(file, (rank+(direction<<1)))]){
                     struct move* newMove = (struct move*)malloc(sizeof(struct move));
                     newMove->newFile = file;
                     newMove->newRank = rank+2*direction;
-                    newMove->oldFile = file;
-                    newMove->oldRank = rank;
-                    newMove->isCapture = 0;
                     addMove(moves, &currentLimit, newMove);
                 }
             }

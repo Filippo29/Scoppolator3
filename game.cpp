@@ -14,7 +14,7 @@ int main(int argc, char** argv){
 Game::Game(){
     this->b = Game::init1();
     struct moves_t* m = Piece::getMoves(this->b, 8);
-    Game::printMoves(m);
+    Game::printMoves(b, m);
     Game::print(this->b);
 }
 
@@ -57,19 +57,20 @@ void Game::print(struct board* b){
     }
 }
 
-void Game::printMoves(struct moves_t* moves){
+void Game::printMoves(struct board* b, struct moves_t* moves){
     std::cout << moves->nMoves << "\n";
     for(int i = 0; i < moves->nMoves; i++){
+        unsigned char isCapture = (b->board[bIndex(moves->moves[i].newFile, moves->moves[i].newRank)] != 0);
         switch(moves->piece){
             case PAWN: {
-                if(!moves->moves[i].isCapture)
-                    std::cout << (char)(97+(int)moves->moves[i].oldFile) << (int)moves->moves[i].newRank;
+                if(!isCapture)
+                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << (int)moves->moves[i].newRank;
                 else
-                    std::cout << (char)(97+(int)moves->moves[i].oldFile) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
                 break;
             }
             default:{
-                if(!moves->moves[i].isCapture)
+                if(!isCapture)
                     std::cout << Piece::toString(moves->piece) << (char)(97+moves->moves[i].newFile) << (int)moves->moves[i].newRank;
                 else
                     std::cout << Piece::toString(moves->piece) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
