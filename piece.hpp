@@ -5,10 +5,10 @@
 
 class Piece{
     private:
-        static void addMove(struct move* moves, int* nMoves,  int* currentLimit, struct move* newMove);
+        static void addMove(struct moves_t* moves,  int* currentLimit, struct move* newMove);
     public:
         static std::string toString(char piece);
-        static struct move* getMoves(struct board* b, unsigned char bIndex);
+        static struct moves_t* getMoves(struct board* b, unsigned char bIndex);
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "piece.hpp"
 #include "common.hpp"
@@ -28,39 +29,70 @@ std::string Piece::toString(char piece){
     }
 }
 
-void Piece::addMove(struct move* moves, int* nMoves, int* currentLimit, struct move* newMove){
-    if(currentLimit == nMoves + 1){
-        moves = (struct move*)realloc(moves, *(currentLimit)+50);
+void Piece::addMove(struct moves_t* moves, int* currentLimit, struct move* newMove){
+    if((*currentLimit) == moves->nMoves + 1){
+        moves->moves = (struct move*)realloc(moves->moves, *(currentLimit)+50);
         (*currentLimit) += 50;
     }
-    moves[*(nMoves)] = (*newMove);
+    moves->moves[moves->nMoves] = (*newMove);
+    moves->nMoves++;
     free(newMove);
 }
 
-struct move* Piece::getMoves(struct board* b, unsigned char bIndex){
-    struct move* moves = (struct move*)malloc(50*sizeof(struct move));
+struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
+    struct moves_t* moves = (struct moves_t*)malloc(sizeof(struct moves_t));
+    moves->nMoves = 0;
+    moves->piece = white(b->board[index]);
+
     int currentLimit = 50;
-    int nMoves = 0;
+    moves->moves = (struct move*)malloc(currentLimit*sizeof(struct move));
 
-    unsigned char file = fileFromIndex(bIndex);
-    unsigned char rank = rankFromIndex(bIndex);
-    bool isWhite = b->board[bIndex] == white(b->board[bIndex]);
+    unsigned char file = fileFromIndex(index);
+    unsigned char rank = rankFromIndex(index);
+    bool isWhite = b->board[index] == white(b->board[index]);
 
-    switch (b->board[bIndex])
+    switch (white(b->board[index]))
     {
-    case PAWN:
-        break;
-    case BISHOP:
-        break;
-    case KNIGHT:
-        break;
-    case ROOK:
-        break;
-    case QUEEN:
-        break;
-    case KING:
-        break;
-    default:
-        break;
+        case PAWN: {
+            char direction = isWhite ? 1 : -1;
+            if(!b->board[bIndex(file, (rank+direction))]){
+                struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                newMove->newFile = file;
+                newMove->newRank = rank+direction;
+                newMove->oldFile = file;
+                newMove->oldRank = rank;
+                newMove->isCapture = 0;
+                addMove(moves, &currentLimit, newMove);
+                if(((isWhite && rank==1) || (!isWhite && rank==6)) && !b->board[bIndex(file, (rank+(direction<<1)))]){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank+2*direction;
+                    newMove->oldFile = file;
+                    newMove->oldRank = rank;
+                    newMove->isCapture = 0;
+                    addMove(moves, &currentLimit, newMove);
+                }
+            }
+            break;
+        }
+        case BISHOP:{
+            break;
+        }
+        case KNIGHT:{
+            break;
+        }
+        case ROOK:{
+            break;
+        }
+        case QUEEN:{
+            break;
+        }
+        case KING:{
+            break;
+        }
+        default:{
+            break;
+        }
     }
+    return moves;
 }

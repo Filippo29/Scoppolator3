@@ -5,5 +5,6 @@ class Game{
         Game();
         static struct board* init1();
         static void print(struct board* b);
+        static void printMoves(struct moves_t* moves);
         struct board* doMove();
 };

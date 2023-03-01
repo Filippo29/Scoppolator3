@@ -7,14 +7,15 @@
 #include "common.hpp"
 
 int main(int argc, char** argv){
-    std::cout << sizeof(unsigned char) << "\n";
     Game();
     return 0;
 }
 
 Game::Game(){
     this->b = Game::init1();
-    Game::print(b);
+    struct moves_t* m = Piece::getMoves(this->b, 8);
+    Game::printMoves(m);
+    Game::print(this->b);
 }
 
 struct board* Game::init1(){
@@ -51,6 +52,29 @@ void Game::print(struct board* b){
     for(int rank = 7; rank >= 0; rank--){
         for(int file = 0; file < 8; file++){
             std::cout << Piece::toString(b->board[bIndex(file, rank)]) << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
+void Game::printMoves(struct moves_t* moves){
+    std::cout << moves->nMoves << "\n";
+    for(int i = 0; i < moves->nMoves; i++){
+        switch(moves->piece){
+            case PAWN: {
+                if(!moves->moves[i].isCapture)
+                    std::cout << (char)(97+(int)moves->moves[i].oldFile) << (int)moves->moves[i].newRank;
+                else
+                    std::cout << (char)(97+(int)moves->moves[i].oldFile) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                break;
+            }
+            default:{
+                if(!moves->moves[i].isCapture)
+                    std::cout << Piece::toString(moves->piece) << (char)(97+moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                else
+                    std::cout << Piece::toString(moves->piece) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                break;
+            }
         }
         std::cout << "\n";
     }
