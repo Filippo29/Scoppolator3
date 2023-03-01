@@ -37,10 +37,30 @@ void Piece::addMove(struct move* moves, int* nMoves, int* currentLimit, struct m
     free(newMove);
 }
 
-struct move* Piece::getMoves(struct board*){
+struct move* Piece::getMoves(struct board* b, unsigned char bIndex){
     struct move* moves = (struct move*)malloc(50*sizeof(struct move));
     int currentLimit = 50;
     int nMoves = 0;
 
+    char file = fileFromIndex(bIndex);
+    char rank = rankFromIndex(bIndex);
+    bool isWhite = b->board[bIndex] == white(b->board[bIndex]);
 
+    switch (b->board[bIndex])
+    {
+    case PAWN:
+        break;
+    case BISHOP:
+        break;
+    case KNIGHT:
+        break;
+    case ROOK:
+        break;
+    case QUEEN:
+        break;
+    case KING:
+        break;
+    default:
+        break;
+    }
 }

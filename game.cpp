@@ -7,7 +7,7 @@
 #include "common.hpp"
 
 int main(int argc, char** argv){
-    std::cout << sizeof(struct board) << "\n";
+    std::cout << sizeof(unsigned char) << "\n";
     Game();
     return 0;
 }
@@ -19,7 +19,7 @@ Game::Game(){
 
 struct board* Game::init1(){
     struct board* b = (struct board*)malloc(sizeof(struct board));
-    b->board = (char*)calloc(64, sizeof(char));
+    b->board = (unsigned char*)calloc(64, sizeof(char));
 
     b->board[bIndex(0, 0)] = white(ROOK);
     b->board[bIndex(1, 0)] = white(KNIGHT);

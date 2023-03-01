@@ -3,17 +3,19 @@
 
 typedef struct board{
     char turn;  //0 = white, 1 = black
-    char* board;
+    unsigned char* board;
 } board;
 
 typedef struct move{
-    char file1;
-    char rank1;
-    char file2;
-    char rank2;
+    unsigned char file1;
+    unsigned char rank1;
+    unsigned char file2;
+    unsigned char rank2;
 } move;
 
 #define bIndex(file, rank) (rank<<3)+file
+#define fileFromIndex(bIndex) (bIndex>>3)
+#define rankFromIndex(bIndex) bIndex%8
 #define black(piece) piece>15 ? piece : piece<<1
 #define white(piece) piece>15 ? piece>>1 : piece
 
