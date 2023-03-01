@@ -83,6 +83,87 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
             break;
         }
         case BISHOP:{
+            int i;
+            bool flag;  //true if there's a piece on the selected square
+            bool flag2;  //true if the piece on the selected square is same color as the moving piece
+            bool tmp;  //true if the piece on the selected square is white
+            for(i = 1; i < 8 && file + i < 8 && rank + i < 8; i++){
+                flag = b->board[index+9*i];
+                tmp = (b->board[index+9*i] == (white(b->board[index+9*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1 && rank + i < 8; i++){
+                flag = b->board[index+7*i];
+                tmp = (b->board[index+7*i] == (white(b->board[index+7*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1 && rank - i > -1; i++){
+                flag = b->board[index-9*i];
+                tmp = (b->board[index-9*i] == (white(b->board[index-9*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file + i < 8 && rank - i > -1; i++){
+                flag = b->board[index-7*i];
+                tmp = (b->board[index-7*i] == (white(b->board[index-7*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    std::cout << "diocane" << file+i << ", " << rank-i << "\n";
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
             break;
         }
         case KNIGHT:{
