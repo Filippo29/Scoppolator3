@@ -13,7 +13,7 @@ int main(int argc, char** argv){
 
 Game::Game(){
     this->b = Game::init1();
-    struct moves_t* m = Piece::getMoves(this->b, 8);
+    struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
     Game::printMoves(b, m);
     Game::print(this->b);
 }
@@ -43,6 +43,9 @@ struct board* Game::init1(){
     b->board[bIndex(6, 7)] = black(KNIGHT);
     b->board[bIndex(7, 7)] = black(ROOK);
 
+    b->board[bIndex(4, 2)] = black(QUEEN);
+    b->board[bIndex(4, 3)] = white(PAWN);
+
     for(int file = 0; file < 8; file++)
         b->board[bIndex(file, 6)] = black(PAWN);
     return b;
@@ -64,16 +67,16 @@ void Game::printMoves(struct board* b, struct moves_t* moves){
         switch(moves->piece){
             case PAWN: {
                 if(!isCapture)
-                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << (int)moves->moves[i].newRank;
+                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << (int)moves->moves[i].newRank+1;
                 else
-                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                    std::cout << (char)(97+(int)fileFromIndex(moves->index)) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank+1;
                 break;
             }
             default:{
                 if(!isCapture)
-                    std::cout << Piece::toString(moves->piece) << (char)(97+moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                    std::cout << Piece::toString(moves->piece) << (char)(97+moves->moves[i].newFile) << (int)moves->moves[i].newRank+1;
                 else
-                    std::cout << Piece::toString(moves->piece) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank;
+                    std::cout << Piece::toString(moves->piece) << "x" << (char)(97+(int)moves->moves[i].newFile) << (int)moves->moves[i].newRank+1;
                 break;
             }
         }

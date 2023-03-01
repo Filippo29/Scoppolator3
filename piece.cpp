@@ -68,6 +68,18 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
                     addMove(moves, &currentLimit, newMove);
                 }
             }
+            if(file+1 < 8 && b->board[bIndex(file+1, (rank+direction))] && (b->board[bIndex(file+1, (rank+direction))] == white(b->board[bIndex(file+1, (rank+direction))])) != isWhite){
+                struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                newMove->newFile = file+1;
+                newMove->newRank = rank+direction;
+                addMove(moves, &currentLimit, newMove);
+            }
+            if(file-1 > -1 && b->board[bIndex(file-1, (rank+direction))] && (b->board[bIndex(file-1, (rank+direction))] == white(b->board[bIndex(file-1, (rank+direction))])) != isWhite){
+                struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                newMove->newFile = file-1;
+                newMove->newRank = rank+direction;
+                addMove(moves, &currentLimit, newMove);
+            }
             break;
         }
         case BISHOP:{

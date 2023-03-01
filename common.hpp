@@ -15,7 +15,7 @@ typedef struct moves_t{
     struct move* moves;
     int nMoves;
     unsigned char piece;
-    unsigned char index;
+    unsigned char index;  //initial piece index
 } moves_t;
 
 #define bIndex(file, rank) (rank<<3)+file
