@@ -42,8 +42,8 @@ struct move* Piece::getMoves(struct board* b, unsigned char bIndex){
     int currentLimit = 50;
     int nMoves = 0;
 
-    char file = fileFromIndex(bIndex);
-    char rank = rankFromIndex(bIndex);
+    unsigned char file = fileFromIndex(bIndex);
+    unsigned char rank = rankFromIndex(bIndex);
     bool isWhite = b->board[bIndex] == white(b->board[bIndex]);
 
     switch (b->board[bIndex])
