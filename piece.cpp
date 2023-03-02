@@ -32,7 +32,7 @@ std::string Piece::toString(char piece){
 void Piece::addMove(struct moves_t* moves, int* currentLimit, struct move* newMove){
     if((*currentLimit) == moves->nMoves + 1){
         moves->moves = (struct move*)realloc(moves->moves, *(currentLimit)+50);
-        (*currentLimit) += 50;
+        (*currentLimit) += 30;
     }
     moves->moves[moves->nMoves] = (*newMove);
     moves->nMoves++;
@@ -44,7 +44,7 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
     moves->nMoves = 0;
     moves->piece = white(b->board[index]);
 
-    int currentLimit = 50;
+    int currentLimit = 30;
     moves->moves = (struct move*)malloc(currentLimit*sizeof(struct move));
 
     unsigned char file = fileFromIndex(index);
@@ -167,15 +167,299 @@ struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
             break;
         }
         case KNIGHT:{
+            int Nmoves[8][2] = {{2, 1}, {1, 2}, {-2, 1}, {1, -2}, {2, -1}, {-1, 2}, {-1, -2}, {-2, -1}};
+            int x, y;
+            bool flag;  //true if there's a piece on the selected square
+            bool flag2;  //true if the piece on the selected square is same color as the moving piece
+            bool tmp;  //true if the piece on the selected square is white
+            int nIndex;
+            for(int i = 0; i < 8; i++){
+                x = file+Nmoves[i][0];
+                y = rank+Nmoves[i][1];
+                nIndex = bIndex(x, y);
+
+                flag = b->board[nIndex];
+                tmp = (b->board[nIndex] == (white(b->board[nIndex])));
+                flag2 = (isWhite == tmp);
+                if(x < 8 && x > -1 && y < 8 && y > -1 && (!flag || (flag && !flag2))){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = x;
+                    newMove->newRank = y;
+                    addMove(moves, &currentLimit, newMove);
+                }
+            }
             break;
         }
         case ROOK:{
+            int i;
+            bool flag;  //true if there's a piece on the selected square
+            bool flag2;  //true if the piece on the selected square is same color as the moving piece
+            bool tmp;  //true if the piece on the selected square is white
+            for(i = 1; i < 8 && file + i < 8; i++){
+                flag = b->board[index + i];
+                tmp = (b->board[index + i] == (white(b->board[index + i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1; i++){
+                flag = b->board[index - i];
+                tmp = (b->board[index - i] == (white(b->board[index - i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+
+            for(i = 1; i < 8 && rank + i < 8; i++){
+                flag = b->board[index + (i<<3)];
+                tmp = (b->board[index + (i<<3)] == (white(b->board[index + (i<<3)])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && rank - i > -1; i++){
+                flag = b->board[index - (i<<3)];
+                tmp = (b->board[index - (i<<3)] == (white(b->board[index - (i<<3)])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
             break;
         }
         case QUEEN:{
+            int i;
+            bool flag;  //true if there's a piece on the selected square
+            bool flag2;  //true if the piece on the selected square is same color as the moving piece
+            bool tmp;  //true if the piece on the selected square is white
+            
+            //rook moves:
+            for(i = 1; i < 8 && file + i < 8; i++){
+                flag = b->board[index + i];
+                tmp = (b->board[index + i] == (white(b->board[index + i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1; i++){
+                flag = b->board[index - i];
+                tmp = (b->board[index - i] == (white(b->board[index - i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+
+            for(i = 1; i < 8 && rank + i < 8; i++){
+                flag = b->board[index + (i<<3)];
+                tmp = (b->board[index + (i<<3)] == (white(b->board[index + (i<<3)])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && rank - i > -1; i++){
+                flag = b->board[index - (i<<3)];
+                tmp = (b->board[index - (i<<3)] == (white(b->board[index - (i<<3)])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            //bishop moves:
+            for(i = 1; i < 8 && file + i < 8 && rank + i < 8; i++){
+                flag = b->board[index+9*i];
+                tmp = (b->board[index+9*i] == (white(b->board[index+9*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1 && rank + i < 8; i++){
+                flag = b->board[index+7*i];
+                tmp = (b->board[index+7*i] == (white(b->board[index+7*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank+i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file - i > -1 && rank - i > -1; i++){
+                flag = b->board[index-9*i];
+                tmp = (b->board[index-9*i] == (white(b->board[index-9*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file-i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
+            for(i = 1; i < 8 && file + i < 8 && rank - i > -1; i++){
+                flag = b->board[index-7*i];
+                tmp = (b->board[index-7*i] == (white(b->board[index-7*i])));
+                flag2 = (isWhite == tmp);
+                if(flag && flag2)
+                    break;
+                if(!flag){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                } else if(flag && !flag2) {
+                    std::cout << "diocane" << file+i << ", " << rank-i << "\n";
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = file+i;
+                    newMove->newRank = rank-i;
+                    addMove(moves, &currentLimit, newMove);
+                    break;
+                }
+            }
             break;
         }
         case KING:{
+            int Nmoves[8][2] = {{1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}};
+            int x, y;
+            bool flag;  //true if there's a piece on the selected square
+            bool flag2;  //true if the piece on the selected square is same color as the moving piece
+            bool tmp;  //true if the piece on the selected square is white
+            int nIndex;
+            for(int i = 0; i < 8; i++){
+                x = file+Nmoves[i][0];
+                y = rank+Nmoves[i][1];
+                nIndex = bIndex(x, y);
+
+                flag = b->board[nIndex];
+                tmp = (b->board[nIndex] == (white(b->board[nIndex])));
+                flag2 = (isWhite == tmp);
+                if(x < 8 && x > -1 && y < 8 && y > -1 && (!flag || (flag && !flag2))){
+                    struct move* newMove = (struct move*)malloc(sizeof(struct move));
+                    newMove->newFile = x;
+                    newMove->newRank = y;
+                    addMove(moves, &currentLimit, newMove);
+                }
+            }
             break;
         }
         default:{

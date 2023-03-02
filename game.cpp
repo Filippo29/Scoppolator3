@@ -44,7 +44,7 @@ struct board* Game::init1(){
     b->board[bIndex(7, 7)] = black(ROOK);
 
     b->board[bIndex(4, 2)] = black(QUEEN);
-    b->board[bIndex(4, 3)] = white(BISHOP);
+    b->board[bIndex(4, 3)] = white(KING);
 
     for(int file = 0; file < 8; file++)
         b->board[bIndex(file, 6)] = black(PAWN);
@@ -85,5 +85,5 @@ void Game::printMoves(struct board* b, struct moves_t* moves){
 }
 
 struct board* doMove(){
-    
+    return 0;
 }
