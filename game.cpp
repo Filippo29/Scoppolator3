@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <map>
 
 #include "piece.hpp"
 #include "game.hpp"
@@ -18,12 +19,14 @@ Game::Game(){
     Game::printMoves(b, m);
     Game::print(this->b);
     doMove(this->b, m, 0);
+    std::cout << evaluate(this->b);
     //Game::print(b);
 }
 
 struct board* Game::init1(){
     struct board* b = (struct board*)malloc(sizeof(struct board));
     b->board = (unsigned char*)calloc(64, sizeof(unsigned char));
+    b->turn = 0; //white's turn
 
     b->board[bIndex(0, 0)] = white(ROOK);
     b->board[bIndex(1, 0)] = white(KNIGHT);
@@ -93,6 +96,12 @@ struct board* Game::getFromFEN(std::string FEN){
             b->board[bIndex(y, (7-rankN))] = Piece::toChar(ns.at(y));
         }
     }
+    
+    if(s2.at(0) == 'w')
+        b->turn = 0;
+    else
+        b->turn = 1;
+    
     return b;
 }
 
@@ -103,6 +112,28 @@ void Game::print(struct board* b){
         }
         std::cout << "\n";
     }
+}
+
+double Game::evaluate(struct board* b){
+    double eval = 0.0;
+    int isWhite;
+    std::map<unsigned char, double> values;
+    values[PAWN] = 1.0;
+    values[KNIGHT] = 3.0;
+    values[BISHOP] = 3.0;
+    values[ROOK] = 5.0;
+    values[QUEEN] = 9.0;
+    values[KING] = 0.0;
+    
+    for(int i = 0; i < 64; i++){
+        if(b->board[i] == (white(b->board[i])))
+            isWhite = 1;
+        else
+            isWhite = -1;
+        
+        eval += isWhite*values[white(b->board[i])];
+    }
+    return eval;
 }
 
 void Game::printMoves(struct board* b, struct moves_t* moves){
