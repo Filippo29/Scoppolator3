@@ -12,10 +12,12 @@ int main(int argc, char** argv){
 }
 
 Game::Game(){
-    this->b = Game::init1();
-    struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
-    Game::printMoves(b, m);
-    Game::print(this->b);
+    struct board* bb = getFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    //this->b = Game::init1();
+    //struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
+    //Game::printMoves(b, m);
+    //Game::print(this->b);
+    Game::print(bb);
 }
 
 struct board* Game::init1(){
@@ -43,11 +45,53 @@ struct board* Game::init1(){
     b->board[bIndex(6, 7)] = black(KNIGHT);
     b->board[bIndex(7, 7)] = black(ROOK);
 
-    b->board[bIndex(4, 2)] = black(QUEEN);
-    b->board[bIndex(4, 3)] = white(KING);
+    //b->board[bIndex(4, 2)] = black(QUEEN);
+    //b->board[bIndex(4, 3)] = white(KING);
 
     for(int file = 0; file < 8; file++)
         b->board[bIndex(file, 6)] = black(PAWN);
+    return b;
+}
+
+struct board* Game::getFromFEN(std::string FEN){
+    std::string s1 = FEN.substr(0, FEN.find(" "));
+    std::string s2 = FEN.substr(FEN.find(" ")+1, FEN.length());
+
+    struct board* b = (struct board*)malloc(sizeof(struct board));
+    b->board = (unsigned char*)calloc(64, sizeof(char));
+    std::string ns = "";
+    int rankN = 0;
+    for(int i = 0; i < s1.length(); i++){
+        if(s1.at(i) == '/'){
+            for(int y = 0; y < ns.length(); y++){
+                if(isdigit(ns.at(y))){
+                    int nspace = ns.at(y) - 48;
+                    for(int z = 0; z < nspace; z++){
+                        b->board[bIndex(y, (7-rankN))] = 0;
+                        y++;
+                    }
+                }else{
+                    b->board[bIndex(y, (7-rankN))] = Piece::toChar(ns.at(y));
+                }
+            }
+            ns = "";
+            rankN++;
+        }else{
+            ns += s1.at(i);
+        }
+    }
+    for(int y = 0; y < ns.length(); y++){
+        if(isdigit(ns.at(y))){
+            std::cout << ns.at(y);
+            int nspace = ns.at(y) - 48;
+            for(int z = 0; z < nspace; z++){
+                b->board[bIndex(y, (7-rankN))] = 0;
+                y++;
+            }
+        }else{
+            b->board[bIndex(y, (7-rankN))] = Piece::toChar(ns.at(y));
+        }
+    }
     return b;
 }
 

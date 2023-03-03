@@ -29,6 +29,25 @@ std::string Piece::toString(char piece){
     }
 }
 
+unsigned char Piece::toChar(char piece){
+    bool black = false;
+    if(piece == tolower(piece)){
+        black = true;
+    }
+    piece = tolower(piece);
+    //std::cout << piece;
+
+    switch(piece){
+        case 'p': {return black ? black(PAWN) : white(PAWN);}
+        case 'r': {return black ? black(ROOK) : white(ROOK);}
+        case 'n': {return black ? black(KNIGHT) : white(KNIGHT);}
+        case 'b': {return black ? black(BISHOP) : white(BISHOP);}
+        case 'q': {return black ? black(QUEEN) : white(QUEEN);}
+        case 'k': {return black ? black(KING) : white(KING);}
+        default: {return 0;}
+    }
+}
+
 void Piece::addMove(struct moves_t* moves, int* currentLimit, struct move* newMove){
     if((*currentLimit) == moves->nMoves + 1){
         moves->moves = (struct move*)realloc(moves->moves, *(currentLimit)+50);

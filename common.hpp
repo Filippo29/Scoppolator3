@@ -2,8 +2,8 @@
 #define BOARD
 
 typedef struct board{
-    char turn;  //0 = white, 1 = black
     unsigned char* board;
+    char turn;  //0 = white, 1 = black
 } board;
 
 typedef struct move{
