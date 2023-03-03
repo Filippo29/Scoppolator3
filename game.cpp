@@ -12,17 +12,18 @@ int main(int argc, char** argv){
 }
 
 Game::Game(){
-    struct board* bb = getFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    //this->b = Game::init1();
-    //struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
-    //Game::printMoves(b, m);
-    //Game::print(this->b);
-    Game::print(bb);
+    //struct board* bb = getFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    this->b = Game::init1();
+    struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
+    Game::printMoves(b, m);
+    Game::print(this->b);
+    doMove(this->b, m, 0);
+    //Game::print(b);
 }
 
 struct board* Game::init1(){
     struct board* b = (struct board*)malloc(sizeof(struct board));
-    b->board = (unsigned char*)calloc(64, sizeof(char));
+    b->board = (unsigned char*)calloc(64, sizeof(unsigned char));
 
     b->board[bIndex(0, 0)] = white(ROOK);
     b->board[bIndex(1, 0)] = white(KNIGHT);
@@ -46,7 +47,7 @@ struct board* Game::init1(){
     b->board[bIndex(7, 7)] = black(ROOK);
 
     //b->board[bIndex(4, 2)] = black(QUEEN);
-    //b->board[bIndex(4, 3)] = white(KING);
+    b->board[bIndex(4, 3)] = white(KNIGHT);
 
     for(int file = 0; file < 8; file++)
         b->board[bIndex(file, 6)] = black(PAWN);
@@ -128,6 +129,12 @@ void Game::printMoves(struct board* b, struct moves_t* moves){
     }
 }
 
-struct board* doMove(){
-    return 0;
+struct board* Game::doMove(struct board* b, struct moves_t* ms, int i){
+    struct board* nBoard = (struct board*)malloc(sizeof(struct board));
+    nBoard->board = (unsigned char*)calloc(64, sizeof(unsigned char));
+    struct move m = ms->moves[i];
+    memcpy(nBoard->board, b->board, 64*sizeof(unsigned char));
+    nBoard->board[bIndex(m.newFile, m.newRank)] = ms->piece;
+    nBoard->board[ms->index] = 0;
+    return nBoard;
 }

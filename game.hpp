@@ -7,5 +7,5 @@ class Game{
         static struct board* getFromFEN(std::string FEN);
         static void print(struct board* b);
         static void printMoves(struct board* b, struct moves_t* moves);
-        struct board* doMove();
+        static struct board* doMove(struct board* b, struct moves_t* m, int i);
 };
