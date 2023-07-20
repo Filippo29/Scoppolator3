@@ -18,6 +18,11 @@ typedef struct moves_t{
     unsigned char index;  //initial piece index
 } moves_t;
 
+typedef struct bestMove_t{
+    struct move* move_sequence;
+    double eval;
+} bestMove_t;
+
 #define bIndex(file, rank) (rank<<3)+file
 #define fileFromIndex(bIndex) bIndex%8
 #define rankFromIndex(bIndex) (bIndex>>3)
@@ -30,5 +35,8 @@ typedef struct moves_t{
 #define ROOK 13
 #define QUEEN 14
 #define KING 15
+
+#define MAX_DEPTH 5
+#define UNSET 9999
 
 #endif

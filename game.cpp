@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cstring>
 #include <map>
 
 #include "piece.hpp"
@@ -14,12 +15,16 @@ int main(int argc, char** argv){
 
 Game::Game(){
     //struct board* bb = getFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-    this->b = Game::init1();
-    struct moves_t* m = Piece::getMoves(this->b, bIndex(4, 3));
-    Game::printMoves(b, m);
+    struct board* fork = getFromFEN("4k3/8/8/5q2/4N3/8/3P4/4K3 w - - 0 1");
+    //this->b = Game::init1();
+    this->b = fork;
+    struct moves_t* m = Piece::getMoves(this->b, bIndex(3, 4));
+    Game::printMoves(this->b, m);
     Game::print(this->b);
     doMove(this->b, m, 0);
-    std::cout << evaluate(this->b);
+    //std::cout << evaluate(this->b);
+    bestMove_t* bm = findBest(this->b);
+    std::cout << std::endl << "Evaluation after " << bm->move_sequence[0].newFile << "," << bm->move_sequence[0].newRank << ": " << bm->eval;
     //Game::print(b);
 }
 
@@ -67,15 +72,17 @@ struct board* Game::getFromFEN(std::string FEN){
     int rankN = 0;
     for(int i = 0; i < s1.length(); i++){
         if(s1.at(i) == '/'){
+            int spaces = 0;
             for(int y = 0; y < ns.length(); y++){
                 if(isdigit(ns.at(y))){
                     int nspace = ns.at(y) - 48;
+                    std::cout << std::endl << nspace;
                     for(int z = 0; z < nspace; z++){
-                        b->board[bIndex(y, (7-rankN))] = 0;
-                        y++;
+                        b->board[bIndex(y+z+spaces, (7-rankN))] = 0;
                     }
+                    spaces += nspace;
                 }else{
-                    b->board[bIndex(y, (7-rankN))] = Piece::toChar(ns.at(y));
+                    b->board[bIndex(y+spaces, (7-rankN))] = Piece::toChar(ns.at(y));
                 }
             }
             ns = "";
@@ -86,7 +93,6 @@ struct board* Game::getFromFEN(std::string FEN){
     }
     for(int y = 0; y < ns.length(); y++){
         if(isdigit(ns.at(y))){
-            std::cout << ns.at(y);
             int nspace = ns.at(y) - 48;
             for(int z = 0; z < nspace; z++){
                 b->board[bIndex(y, (7-rankN))] = 0;
@@ -136,8 +142,62 @@ double Game::evaluate(struct board* b){
     return eval;
 }
 
+bestMove_t* Game::findBest(struct board* b){
+    bestMove_t* ret = (struct bestMove_t*)malloc(sizeof(bestMove_t));
+    ret->move_sequence = (struct move*)malloc(MAX_DEPTH*sizeof(move));
+    double ev = findBestMove(b, ret->move_sequence, 0);
+    return ret;
+}
+
+char Game::isBest(double eval, double oldEval, char turn){
+    if(turn) // black's turn
+        return eval < oldEval;
+    else // white's turn
+        return oldEval > eval;
+}
+
+double Game::findBestMove(struct board* b, struct move* move_sequence, int depth){
+    double bestEval = UNSET;
+    move bestMove;
+    if(depth>=MAX_DEPTH){
+        for(int i = 0; i < 64; i++){
+            if(b->turn == Piece::getColorTurn(b->board[i])){
+                moves_t* legalMoves = Piece::getMoves(b, i);
+                for(int y = 0; y < legalMoves->nMoves; y++){
+                    board* nb = doMove(b, legalMoves, y);
+                    nb->turn = !b->turn;
+                    double eval = evaluate(nb);
+                    if(bestEval == UNSET || isBest(eval, bestEval, b->turn)){
+                        bestEval = eval;
+                        bestMove = legalMoves->moves[y];
+                    }
+                }
+            }
+        }
+        move_sequence[depth] = bestMove;
+        return bestEval;
+    } else {
+        for(int i = 0; i < 64; i++){
+            if(b->turn == Piece::getColorTurn(b->board[i])){
+                moves_t* legalMoves = Piece::getMoves(b, i);
+                for(int y = 0; y < legalMoves->nMoves; y++){
+                    board* nb = doMove(b, legalMoves, y);
+                    nb->turn = !b->turn;
+                    double eval = Game::findBestMove(nb, move_sequence, depth+1);
+                    if(bestEval == UNSET || isBest(eval, bestEval, b->turn)){
+                        bestEval = eval;
+                        bestMove = legalMoves->moves[y];
+                    }
+                }
+            }
+        }
+        move_sequence[depth] = bestMove;
+        return bestEval;
+    }
+}
+
 void Game::printMoves(struct board* b, struct moves_t* moves){
-    std::cout << moves->nMoves << "\n";
+    std::cout << "Number of legal moves: " << moves->nMoves << "\n";
     for(int i = 0; i < moves->nMoves; i++){
         unsigned char isCapture = (b->board[bIndex(moves->moves[i].newFile, moves->moves[i].newRank)] != 0);
         switch(moves->piece){

@@ -25,7 +25,7 @@ std::string Piece::toString(char piece){
         case KING:
             return black ? "k" : "K";
         default:
-            return " ";
+            return "_";
     }
 }
 
@@ -56,6 +56,10 @@ void Piece::addMove(struct moves_t* moves, int* currentLimit, struct move* newMo
     moves->moves[moves->nMoves] = (*newMove);
     moves->nMoves++;
     free(newMove);
+}
+
+char Piece::getColorTurn(char piece){  //returns 0 if is black and 1 if is white
+    return !(piece==white(piece));
 }
 
 struct moves_t* Piece::getMoves(struct board* b, unsigned char index){
